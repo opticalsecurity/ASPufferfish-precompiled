@@ -5,19 +5,19 @@ Subject: [PATCH] Build Changes
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 64479f0a892d6847f987d844efe282a6080d607b..d0b7b5ccd2bc2448b1f4f075bb135207c83fcd3a 100644
+index 17de583c91ab7d236c6ec16813e4ae4c042a33e4..9dfcb42e34221f427a65dbfdce500bd1aa142c7d 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -70,7 +70,7 @@ tasks.jar {
+@@ -90,7 +90,7 @@ tasks.jar {
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
              "Implementation-Title" to "CraftBukkit",
--            "Implementation-Version" to "git-Paper-$implementationVersion",
-+            "Implementation-Version" to "git-SlimeWorldManager-$implementationVersion",
+-            "Implementation-Version" to "git-Pufferfish-$implementationVersion", // Pufferfish
++            "Implementation-Version" to "git-SlimeWorldManager-$implementationVersion", // Pufferfish
              "Implementation-Vendor" to date, // Paper
              "Specification-Title" to "Bukkit",
              "Specification-Version" to project.version,
-@@ -154,7 +154,7 @@ fun TaskContainer.registerRunTask(
+@@ -174,7 +174,7 @@ fun TaskContainer.registerRunTask(
      name: String,
      block: JavaExec.() -> Unit
  ): TaskProvider<JavaExec> = register<JavaExec>(name) {
@@ -1953,7 +1953,7 @@ index 7e8dc9e8f381abfdcce2746edc93122d623622d1..12aadf4c981cdb1a6405de99016f4b40
      public FullChunkStatus status;
  
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 8f31413c939cc2b0454ad3d9a1b618dbae449d00..91b318e50fb271bd836f891a30270601f5a94790 100644
+index 58d076e2a8fa1cf56c4c8d15a502e85fcf48aa90..e4a1394f27fdbccfb734d521d50e44a64699ab8c 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -268,7 +268,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -1965,7 +1965,7 @@ index 8f31413c939cc2b0454ad3d9a1b618dbae449d00..91b318e50fb271bd836f891a30270601
      private final CustomBossEvents customBossEvents;
      private final ServerFunctionManager functionManager;
      private boolean enforceWhitelist;
-@@ -444,60 +444,75 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -446,60 +446,75 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          LevelStorageSource.LevelStorageAccess worldSession = this.storageSource;
  
          Registry<LevelStem> dimensions = this.registries.compositeAccess().registryOrThrow(Registries.LEVEL_STEM);
@@ -2057,7 +2057,7 @@ index 8f31413c939cc2b0454ad3d9a1b618dbae449d00..91b318e50fb271bd836f891a30270601
                          MinecraftServer.LOGGER.warn("Could not create path for " + newWorld + "!");
                          MinecraftServer.LOGGER.info("---- Migration of old " + worldType + " folder failed ----");
                      }
-@@ -505,7 +520,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -507,7 +522,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
                  try {
                      worldSession = LevelStorageSource.createDefault(this.server.getWorldContainer().toPath()).validateAndCreateAccess(name, dimensionKey);
@@ -2066,7 +2066,7 @@ index 8f31413c939cc2b0454ad3d9a1b618dbae449d00..91b318e50fb271bd836f891a30270601
                      throw new RuntimeException(ex);
                  }
              }
-@@ -519,18 +534,18 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -521,18 +536,18 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              DynamicOps<Tag> dynamicops = RegistryOps.create(NbtOps.INSTANCE, (HolderLookup.Provider) worldloader_a.datapackWorldgen());
              Pair<WorldData, WorldDimensions.Complete> pair = worldSession.getDataTag(dynamicops, worldloader_a.dataConfiguration(), iregistry, worldloader_a.datapackWorldgen().allRegistriesLifecycle());
  
@@ -2089,7 +2089,7 @@ index 8f31413c939cc2b0454ad3d9a1b618dbae449d00..91b318e50fb271bd836f891a30270601
                      DedicatedServerProperties dedicatedserverproperties = ((DedicatedServer) this).getProperties();
  
                      worldsettings = new LevelSettings(dedicatedserverproperties.levelName, dedicatedserverproperties.gamemode, dedicatedserverproperties.hardcore, dedicatedserverproperties.difficulty, false, new GameRules(), worldloader_a.dataConfiguration());
-@@ -555,20 +570,20 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -557,20 +572,20 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              LevelStem worlddimension = (LevelStem) dimensions.get(dimensionKey);
  
              org.bukkit.generator.WorldInfo worldInfo = new org.bukkit.craftbukkit.generator.CraftWorldInfo(iworlddataserver, worldSession, org.bukkit.World.Environment.getEnvironment(dimension), worlddimension.type().value(), worlddimension.generator(), this.registryAccess()); // Paper
@@ -2114,7 +2114,7 @@ index 8f31413c939cc2b0454ad3d9a1b618dbae449d00..91b318e50fb271bd836f891a30270601
                  this.worldData = worlddata;
                  this.worldData.setGameType(((DedicatedServer) this).getProperties().gamemode); // From DedicatedServer.init
  
-@@ -579,13 +594,13 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -581,13 +596,13 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
                  this.readScoreboard(worldpersistentdata);
                  this.server.scoreboardManager = new org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager(this, world.getScoreboard());
                  this.commandStorage = new CommandStorage(worldpersistentdata);
@@ -2131,7 +2131,7 @@ index 8f31413c939cc2b0454ad3d9a1b618dbae449d00..91b318e50fb271bd836f891a30270601
                      spawners = Collections.emptyList();
                  }
                  world = new ServerLevel(this, this.executor, worldSession, iworlddataserver, worldKey, worlddimension, worldloadlistener, flag, j, spawners, true, this.overworld().getRandomSequences(), org.bukkit.World.Environment.getEnvironment(dimension), gen, biomeProvider);
-@@ -599,12 +614,12 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -601,12 +616,12 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              // Paper - move up
              this.getPlayerList().addWorldborderListener(world);
  
@@ -2146,7 +2146,7 @@ index 8f31413c939cc2b0454ad3d9a1b618dbae449d00..91b318e50fb271bd836f891a30270601
              this.prepareLevels(worldserver.getChunkSource().chunkMap.progressListener, worldserver);
              //worldserver.entityManager.tick(); // SPIGOT-6526: Load pending entities so they are available to the API // Paper - rewrite chunk system, not required to "tick" anything
              this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(worldserver.getWorld()));
-@@ -613,11 +628,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -615,11 +630,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          // Paper start - Handle collideRule team for player collision toggle
          final ServerScoreboard scoreboard = this.getScoreboard();
          final java.util.Collection<String> toRemove = scoreboard.getPlayerTeams().stream().filter(team -> team.getName().startsWith("collideRule_")).map(net.minecraft.world.scores.PlayerTeam::getName).collect(java.util.stream.Collectors.toList());
@@ -2160,20 +2160,20 @@ index 8f31413c939cc2b0454ad3d9a1b618dbae449d00..91b318e50fb271bd836f891a30270601
              this.getPlayerList().collideRuleTeamName = org.apache.commons.lang3.StringUtils.left("collideRule_" + java.util.concurrent.ThreadLocalRandom.current().nextInt(), 16);
              net.minecraft.world.scores.PlayerTeam collideTeam = scoreboard.addPlayerTeam(this.getPlayerList().collideRuleTeamName);
              collideTeam.setSeeFriendlyInvisibles(false); // Because we want to mimic them not being on a team at all
-@@ -1697,7 +1712,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1699,7 +1714,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {
--        return "Paper"; // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
-+        return "SlimeWorldManager"; // ASWM // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
+-        return "Pufferfish"; // Pufferfish - Pufferfish > // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
++        return "SlimeWorldManager"; // ASWM // Pufferfish - Pufferfish > // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
      }
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/net/minecraft/server/level/ServerChunkCache.java b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-index 8c33a12ca879c46893150d6adfb8aa4d397c6b4c..9e227705332b46b5af3bb94e586d8bf6cdc72747 100644
+index 5d26364c0f4ed03bd9994077683c93b9883e5327..9a43703495679654089f6d70a5d2ced496b54291 100644
 --- a/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 +++ b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-@@ -167,7 +167,11 @@ public class ServerChunkCache extends ChunkSource {
+@@ -170,7 +170,11 @@ public class ServerChunkCache extends ChunkSource {
      public final io.papermc.paper.util.maplist.IteratorSafeOrderedReferenceSet<LevelChunk> entityTickingChunks = new io.papermc.paper.util.maplist.IteratorSafeOrderedReferenceSet<>(4096, 0.75f, 4096, 0.15, true);
      // Paper end
  
@@ -2187,7 +2187,7 @@ index 8c33a12ca879c46893150d6adfb8aa4d397c6b4c..9e227705332b46b5af3bb94e586d8bf6
          this.mainThreadProcessor = new ServerChunkCache.MainThreadExecutor(world);
          this.mainThread = Thread.currentThread();
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index c88d5b9125f6ee43bf2be60fd1745d836f271b78..529decbe9f01e874ecfb70bd1c4da016e0262d2a 100644
+index 945783d090e44ebed1d4968c1d1ec0b68f6d494f..23146dbaa925fd837e0a283f6c4a7cb958f3677d 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -687,6 +687,14 @@ public class ServerLevel extends Level implements WorldGenLevel {
@@ -2277,28 +2277,28 @@ index 1379084a80ce25644f13736b4a5ee5fabbd9ec1f..825d30e811a19b3b2dd83643ef925d8a
      }
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 356107688a5d40d1c462b164f61af82f4dfd3926..f824b6a4e17bed3e82c25f7c6711196f0bb52cd3 100644
+index 2ecb8bfd98c141e9f5e7f4e441c8df91e1b9fbc2..e32e172039945eda1ceb07257958c1c03bd0027d 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -269,7 +269,7 @@ import javax.annotation.Nullable; // Paper
  import javax.annotation.Nonnull; // Paper
  
  public final class CraftServer implements Server {
--    private final String serverName = "Paper"; // Paper
-+    private final String serverName = "SlimeWorldManager"; // Paper // SWM
+-    private final String serverName = "Pufferfish"; // Paper // Pufferfish
++    private final String serverName = "SlimeWorldManager"; // Paper // Pufferfish // SWM
      private final String serverVersion;
      private final String bukkitVersion = Versioning.getBukkitVersion();
      private final Logger logger = Logger.getLogger("Minecraft");
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
-index 774556a62eb240da42e84db4502e2ed43495be17..29e29fb2228f08dff3edd8bf651220b83b16ed7b 100644
+index 80553face9c70c2a3d897681e7761df85b22d464..55b57d7bedf5919f4075885e3bb77c26334081ef 100644
 --- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 +++ b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 @@ -11,7 +11,7 @@ public final class Versioning {
      public static String getBukkitVersion() {
          String result = "Unknown-Version";
  
--        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/io.papermc.paper/paper-api/pom.properties");
-+        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/com.infernalsuite.aswm/slimeworldmanager-api/pom.properties"); // ASWM
+-        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/gg.pufferfish.pufferfish/pufferfish-api/pom.properties"); // Pufferfish
++        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/com.infernalsuite.aswm/slimeworldmanager-api/pom.properties"); // Pufferfish // ASWM
          Properties properties = new Properties();
  
          if (stream != null) {
