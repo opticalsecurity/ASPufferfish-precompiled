@@ -33,6 +33,12 @@ allprojects {
         maven("https://repo.codemc.io/repository/nms/")
         maven("https://repo.rapture.pw/repository/maven-releases/")
         maven("https://repo.glaremasters.me/repository/concuncan/")
+        maven("https://jitpack.io")
+    }
+
+    tasks.javadoc {
+        (options as StandardJavadocDocletOptions).addStringOption("-add-modules", "jdk.incubator.vector")
+        (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
     }
 }
 
@@ -66,14 +72,21 @@ paperweight {
     remapRepo.set(paperMavenPublicUrl)
     decompileRepo.set(paperMavenPublicUrl)
 
-    usePaperUpstream(providers.gradleProperty("paperRef")) {
-        withPaperPatcher {
+    useStandardUpstream("pufferfish") {
+        url.set(github("pufferfish-gg", "Pufferfish"))
+        ref.set(providers.gradleProperty("pufferfishRef"))
+
+        withStandardPatcher {
+            apiSourceDirPath.set("pufferfish-api")
+            serverSourceDirPath.set("pufferfish-server")
             apiPatchDir.set(layout.projectDirectory.dir("patches/api"))
             apiOutputDir.set(layout.projectDirectory.dir("slimeworldmanager-api"))
 
             serverPatchDir.set(layout.projectDirectory.dir("patches/server"))
             serverOutputDir.set(layout.projectDirectory.dir("slimeworldmanager-server"))
 
+            // Don't know what this does
+            /*
             patchTasks {
                 register("generatedApi") {
                     isBareDirectory.set(true)
@@ -82,6 +95,7 @@ paperweight {
                     outputDir.set(layout.projectDirectory.dir("paper-api-generator/generated"))
                 }
             }
+            */
         }
     }
 }
