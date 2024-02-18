@@ -85,8 +85,6 @@ paperweight {
             serverPatchDir.set(layout.projectDirectory.dir("patches/server"))
             serverOutputDir.set(layout.projectDirectory.dir("slimeworldmanager-server"))
 
-            // Don't know what this does
-            /*
             patchTasks {
                 register("generatedApi") {
                     isBareDirectory.set(true)
@@ -95,7 +93,6 @@ paperweight {
                     outputDir.set(layout.projectDirectory.dir("paper-api-generator/generated"))
                 }
             }
-            */
         }
     }
 }
